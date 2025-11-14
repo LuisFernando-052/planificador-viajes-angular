@@ -1,0 +1,19 @@
+<nav class="navbar">
+  <div class="nav-container">
+    <a routerLink="/" class="nav-brand">✈️ Planificador de Viajes</a>
+    
+    <ul class="nav-menu" *ngIf="authService.currentUserSig() as user">
+      <li><a routerLink="/dashboard" routerLinkActive="active">Dashboard</a></li>
+      <li><a routerLink="/viajes" routerLinkActive="active">Mis Viajes</a></li>
+      <li class="user-info">
+        <span>{{ user.email }}</span>
+        <button (click)="onLogout()" class="btn-logout">Salir</button>
+      </li>
+    </ul>
+
+    <ul class="nav-menu" *ngIf="!authService.currentUserSig()">
+      <li><a routerLink="/login" routerLinkActive="active">Iniciar Sesión</a></li>
+      <li><a routerLink="/register" routerLinkActive="active">Registrarse</a></li>
+    </ul>
+  </div>
+</nav>
