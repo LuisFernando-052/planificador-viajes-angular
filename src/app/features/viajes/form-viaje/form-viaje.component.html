@@ -1,1 +1,162 @@
-<p>form-viaje works!</p>
+<div class="form-container">
+  <div class="form-card">
+    <div class="form-header">
+      <h2>{{ isEditMode ? 'Editar Viaje' : 'Nuevo Viaje' }}</h2>
+      <a routerLink="/viajes" class="btn-back">← Volver</a>
+    </div>
+
+    <form [formGroup]="viajeForm" (ngSubmit)="onSubmit()">
+      
+      <!-- Destino -->
+      <div class="form-group">
+        <label for="destino">Destino *</label>
+        <input 
+          type="text" 
+          id="destino" 
+          formControlName="destino"
+          class="form-control"
+          [class.invalid]="destino?.invalid && destino?.touched"
+          placeholder="Ej: París, Francia"
+        >
+        <div class="error-message" *ngIf="destino?.invalid && destino?.touched">
+          <small *ngIf="destino?.errors?.['required']">El destino es obligatorio</small>
+          <small *ngIf="destino?.errors?.['minlength']">Mínimo 3 caracteres</small>
+        </div>
+      </div>
+
+      <!-- Descripción -->
+      <div class="form-group">
+        <label for="descripcion">Descripción *</label>
+        <textarea 
+          id="descripcion" 
+          formControlName="descripcion"
+          class="form-control"
+          [class.invalid]="descripcion?.invalid && descripcion?.touched"
+          placeholder="Describe tu viaje..."
+          rows="4"
+        ></textarea>
+        <div class="error-message" *ngIf="descripcion?.invalid && descripcion?.touched">
+          <small *ngIf="descripcion?.errors?.['required']">La descripción es obligatoria</small>
+          <small *ngIf="descripcion?.errors?.['minlength']">Mínimo 10 caracteres</small>
+        </div>
+      </div>
+
+      <!-- Fechas -->
+      <div class="form-row">
+        <div class="form-group">
+          <label for="fechaInicio">Fecha de Inicio *</label>
+          <input 
+            type="date" 
+            id="fechaInicio" 
+            formControlName="fechaInicio"
+            class="form-control"
+            [class.invalid]="fechaInicio?.invalid && fechaInicio?.touched"
+          >
+          <div class="error-message" *ngIf="fechaInicio?.invalid && fechaInicio?.touched">
+            <small *ngIf="fechaInicio?.errors?.['required']">La fecha de inicio es obligatoria</small>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="fechaFin">Fecha de Fin *</label>
+          <input 
+            type="date" 
+            id="fechaFin" 
+            formControlName="fechaFin"
+            class="form-control"
+            [class.invalid]="fechaFin?.invalid && fechaFin?.touched"
+          >
+          <div class="error-message" *ngIf="fechaFin?.invalid && fechaFin?.touched">
+            <small *ngIf="fechaFin?.errors?.['required']">La fecha de fin es obligatoria</small>
+          </div>
+        </div>
+      </div>
+
+      <!-- Error de fechas -->
+      <div class="error-message" *ngIf="viajeForm.errors?.['fechaInvalida'] && (fechaInicio?.touched || fechaFin?.touched)">
+        <small>La fecha de fin debe ser posterior a la fecha de inicio</small>
+      </div>
+
+      <!-- Días calculados -->
+      <div class="info-message" *ngIf="calcularDias() > 0">
+        📅 Duración: {{ calcularDias() }} {{ calcularDias() === 1 ? 'día' : 'días' }}
+      </div>
+
+      <!-- Presupuesto y Estado -->
+      <div class="form-row">
+        <div class="form-group">
+          <label for="presupuesto">Presupuesto ($) *</label>
+          <input 
+            type="number" 
+            id="presupuesto" 
+            formControlName="presupuesto"
+            class="form-control"
+            [class.invalid]="presupuesto?.invalid && presupuesto?.touched"
+            placeholder="1000"
+            min="1"
+            step="0.01"
+          >
+          <div class="error-message" *ngIf="presupuesto?.invalid && presupuesto?.touched">
+            <small *ngIf="presupuesto?.errors?.['required']">El presupuesto es obligatorio</small>
+            <small *ngIf="presupuesto?.errors?.['min']">Debe ser mayor a 0</small>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="estado">Estado *</label>
+          <select 
+            id="estado" 
+            formControlName="estado"
+            class="form-control"
+          >
+            <option value="planificado">Planificado</option>
+            <option value="en-curso">En Curso</option>
+            <option value="completado">Completado</option>
+            <option value="cancelado">Cancelado</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- URL Imagen (opcional) -->
+      <div class="form-group">
+        <label for="imagenUrl">URL de Imagen (opcional)</label>
+        <input 
+          type="url" 
+          id="imagenUrl" 
+          formControlName="imagenUrl"
+          class="form-control"
+          placeholder="https://ejemplo.com/imagen.jpg"
+        >
+      </div>
+
+      <!-- Mensajes -->
+      <div class="alert-error" *ngIf="errorMessage">
+        {{ errorMessage }}
+      </div>
+
+      <div class="alert-success" *ngIf="successMessage">
+        {{ successMessage }}
+      </div>
+
+      <!-- Botones -->
+      <div class="form-actions">
+        <button 
+          type="button" 
+          class="btn-cancel"
+          routerLink="/viajes"
+          [disabled]="isLoading"
+        >
+          Cancelar
+        </button>
+        <button 
+          type="submit" 
+          class="btn-submit"
+          [disabled]="isLoading || viajeForm.invalid"
+        >
+          <span *ngIf="!isLoading">{{ isEditMode ? 'Actualizar' : 'Crear Viaje' }}</span>
+          <span *ngIf="isLoading">Guardando...</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

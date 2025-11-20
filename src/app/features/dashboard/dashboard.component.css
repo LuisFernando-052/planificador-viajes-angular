@@ -1,0 +1,303 @@
+.dashboard-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.dashboard-header {
+  margin-bottom: 30px;
+}
+
+.dashboard-header h1 {
+  color: #333;
+  margin-bottom: 5px;
+}
+
+.user-welcome {
+  color: #666;
+  font-size: 16px;
+}
+
+.loading {
+  text-align: center;
+  padding: 40px;
+  color: #666;
+}
+
+/* Tarjetas de Estadísticas */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.stat-card {
+  background: white;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.stat-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.stat-icon {
+  font-size: 40px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  width: 70px;
+  height: 70px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+}
+
+.stat-info h3 {
+  font-size: 32px;
+  margin: 0;
+  color: #333;
+}
+
+.stat-info p {
+  margin: 5px 0 0 0;
+  color: #666;
+  font-size: 14px;
+}
+
+/* Sección de Presupuesto */
+.budget-section {
+  background: white;
+  border-radius: 10px;
+  padding: 25px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  margin-bottom: 30px;
+}
+
+.budget-section h2 {
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.budget-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.budget-card {
+  background: #f8f9fa;
+  padding: 15px;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.budget-label {
+  color: #666;
+  font-size: 14px;
+  margin: 0 0 10px 0;
+}
+
+.budget-amount {
+  color: #667eea;
+  font-size: 28px;
+  margin: 0;
+}
+
+.budget-amount.spent {
+  color: #e74c3c;
+}
+
+.budget-amount.over-budget {
+  color: #c0392b;
+}
+
+/* Barra de Progreso */
+.progress-bar {
+  height: 20px;
+  background: #e0e0e0;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+  transition: width 0.5s ease;
+}
+
+.progress-fill.over-budget {
+  background: linear-gradient(90deg, #e74c3c 0%, #c0392b 100%);
+}
+
+/* Sección Próximos Viajes */
+.upcoming-section {
+  background: white;
+  border-radius: 10px;
+  padding: 25px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  margin-bottom: 30px;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.section-header h2 {
+  color: #333;
+  margin: 0;
+}
+
+.btn-link {
+  color: #667eea;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.btn-link:hover {
+  text-decoration: underline;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 40px;
+  color: #666;
+}
+
+.empty-state p {
+  font-size: 18px;
+  margin-bottom: 20px;
+}
+
+/* Lista de Viajes */
+.viajes-list {
+  display: grid;
+  gap: 15px;
+}
+
+.viaje-card {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 20px;
+  cursor: pointer;
+  transition: all 0.3s;
+  border: 2px solid transparent;
+}
+
+.viaje-card:hover {
+  border-color: #667eea;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  transform: translateX(5px);
+}
+
+.viaje-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.viaje-header h3 {
+  margin: 0;
+  color: #333;
+}
+
+.badge {
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.estado-planificado {
+  background: #d4edda;
+  color: #155724;
+}
+
+.estado-en-curso {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.estado-completado {
+  background: #cce5ff;
+  color: #004085;
+}
+
+.estado-cancelado {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+.viaje-description {
+  color: #666;
+  margin: 10px 0;
+  font-size: 14px;
+}
+
+.viaje-info {
+  margin: 10px 0;
+  color: #666;
+  font-size: 14px;
+}
+
+.viaje-budget {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  color: #666;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid #ddd;
+}
+
+/* Botones */
+.action-section {
+  text-align: center;
+  margin: 30px 0;
+}
+
+.btn-primary,
+.btn-create {
+  display: inline-block;
+  padding: 12px 30px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  text-decoration: none;
+  border-radius: 8px;
+  font-weight: 600;
+  transition: all 0.3s;
+}
+
+.btn-primary:hover,
+.btn-create:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .budget-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .section-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+}

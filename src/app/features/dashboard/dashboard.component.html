@@ -1,1 +1,123 @@
-<p>dashboard works!</p>
+<div class="dashboard-container">
+  <div class="dashboard-header">
+    <h1>Dashboard</h1>
+    <p class="user-welcome">Bienvenido, {{ userEmail }}</p>
+  </div>
+
+  <!-- Loading -->
+  <div *ngIf="isLoading" class="loading">
+    <p>Cargando datos...</p>
+  </div>
+
+  <!-- Contenido del Dashboard -->
+  <div *ngIf="!isLoading">
+    
+    <!-- Tarjetas de Estadísticas -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon">✈️</div>
+        <div class="stat-info">
+          <h3>{{ estadisticas.totalViajes }}</h3>
+          <p>Total de Viajes</p>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon">📅</div>
+        <div class="stat-info">
+          <h3>{{ estadisticas.viajesPlanificados }}</h3>
+          <p>Planificados</p>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon">🚀</div>
+        <div class="stat-info">
+          <h3>{{ estadisticas.viajesEnCurso }}</h3>
+          <p>En Curso</p>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon">✅</div>
+        <div class="stat-info">
+          <h3>{{ estadisticas.viajesCompletados }}</h3>
+          <p>Completados</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Presupuesto vs Gastos -->
+    <div class="budget-section">
+      <h2>Presupuesto y Gastos</h2>
+      <div class="budget-grid">
+        <div class="budget-card">
+          <p class="budget-label">Presupuesto Total</p>
+          <h3 class="budget-amount">${{ estadisticas.presupuestoTotal | number:'1.2-2' }}</h3>
+        </div>
+        <div class="budget-card">
+          <p class="budget-label">Gasto Total</p>
+          <h3 class="budget-amount spent">${{ estadisticas.gastoTotal | number:'1.2-2' }}</h3>
+        </div>
+        <div class="budget-card">
+          <p class="budget-label">% Gastado</p>
+          <h3 class="budget-amount" [class.over-budget]="estadisticas.porcentajeGastado > 100">
+            {{ estadisticas.porcentajeGastado | number:'1.0-0' }}%
+          </h3>
+        </div>
+      </div>
+      
+      <!-- Barra de Progreso -->
+      <div class="progress-bar">
+        <div 
+          class="progress-fill" 
+          [style.width.%]="estadisticas.porcentajeGastado > 100 ? 100 : estadisticas.porcentajeGastado"
+          [class.over-budget]="estadisticas.porcentajeGastado > 100"
+        ></div>
+      </div>
+    </div>
+
+    <!-- Próximos Viajes -->
+    <div class="upcoming-section">
+      <div class="section-header">
+        <h2>Próximos Viajes</h2>
+        <a routerLink="/viajes" class="btn-link">Ver todos</a>
+      </div>
+
+      <div *ngIf="proximosViajes.length === 0" class="empty-state">
+        <p>📭 No tienes viajes próximos</p>
+        <a routerLink="/viajes/nuevo" class="btn-primary">Planifica tu primer viaje</a>
+      </div>
+
+      <div class="viajes-list" *ngIf="proximosViajes.length > 0">
+        <div 
+          class="viaje-card" 
+          *ngFor="let viaje of proximosViajes"
+          (click)="verDetalleViaje(viaje.id)"
+        >
+          <div class="viaje-header">
+            <h3>{{ viaje.destino }}</h3>
+            <span class="badge" [ngClass]="getEstadoClass(viaje.estado)">
+              {{ getEstadoTexto(viaje.estado) }}
+            </span>
+          </div>
+          <p class="viaje-description">{{ viaje.descripcion }}</p>
+          <div class="viaje-info">
+            <span>📅 {{ viaje.fechaInicio | date:'dd/MM/yyyy' }} - {{ viaje.fechaFin | date:'dd/MM/yyyy' }}</span>
+          </div>
+          <div class="viaje-budget">
+            <span>Presupuesto: ${{ viaje.presupuesto | number:'1.2-2' }}</span>
+            <span>Gastado: ${{ viaje.gastoActual | number:'1.2-2' }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Botón de Acción -->
+    <div class="action-section">
+      <a routerLink="/viajes/nuevo" class="btn-create">
+        ➕ Planificar Nuevo Viaje
+      </a>
+    </div>
+  </div>
+</div>

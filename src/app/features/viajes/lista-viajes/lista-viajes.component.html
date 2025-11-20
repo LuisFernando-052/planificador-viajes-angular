@@ -1,1 +1,151 @@
-<p>lista-viajes works!</p>
+<div class="lista-container">
+  <div class="lista-header">
+    <h1>Mis Viajes</h1>
+    <a routerLink="/viajes/nuevo" class="btn-nuevo">➕ Nuevo Viaje</a>
+  </div>
+
+  <!-- Filtros y Búsqueda -->
+  <div class="filtros-section">
+    <!-- Búsqueda -->
+    <div class="search-box">
+      <input 
+        type="text" 
+        [(ngModel)]="searchTerm"
+        (ngModelChange)="onSearchChange()"
+        placeholder="🔍 Buscar por destino o descripción..."
+        class="search-input"
+      >
+    </div>
+
+    <!-- Filtros -->
+    <div class="filtros-row">
+      <div class="filtro-group">
+        <label>Estado:</label>
+        <select 
+          [(ngModel)]="filtroEstado"
+          (ngModelChange)="onFiltroEstadoChange()"
+          class="filtro-select"
+        >
+          <option value="todos">Todos</option>
+          <option value="planificado">Planificado</option>
+          <option value="en-curso">En Curso</option>
+          <option value="completado">Completado</option>
+          <option value="cancelado">Cancelado</option>
+        </select>
+      </div>
+
+      <div class="filtro-group">
+        <label>Ordenar por:</label>
+        <select 
+          [(ngModel)]="ordenamiento"
+          (ngModelChange)="onOrdenamientoChange()"
+          class="filtro-select"
+        >
+          <option value="fecha-desc">Fecha (más reciente)</option>
+          <option value="fecha-asc">Fecha (más antiguo)</option>
+          <option value="destino-asc">Destino (A-Z)</option>
+          <option value="destino-desc">Destino (Z-A)</option>
+          <option value="presupuesto-desc">Presupuesto (mayor)</option>
+          <option value="presupuesto-asc">Presupuesto (menor)</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading -->
+  <div *ngIf="isLoading" class="loading">
+    <p>Cargando viajes...</p>
+  </div>
+
+  <!-- Lista Vacía -->
+  <div *ngIf="!isLoading && viajesFiltrados.length === 0 && searchTerm === '' && filtroEstado === 'todos'" class="empty-state">
+    <div class="empty-icon">✈️</div>
+    <h3>No tienes viajes registrados</h3>
+    <p>Comienza a planificar tu próxima aventura</p>
+    <a routerLink="/viajes/nuevo" class="btn-primary">Crear mi primer viaje</a>
+  </div>
+
+  <!-- Sin Resultados -->
+  <div *ngIf="!isLoading && viajesFiltrados.length === 0 && (searchTerm !== '' || filtroEstado !== 'todos')" class="empty-state">
+    <div class="empty-icon">🔍</div>
+    <h3>No se encontraron viajes</h3>
+    <p>Intenta con otros filtros de búsqueda</p>
+  </div>
+
+  <!-- Lista de Viajes -->
+  <div *ngIf="!isLoading && viajesFiltrados.length > 0" class="viajes-grid">
+    <div 
+      class="viaje-card" 
+      *ngFor="let viaje of viajesFiltrados"
+      (click)="verDetalle(viaje.id)"
+    >
+      <div class="viaje-header">
+        <h3>{{ viaje.destino }}</h3>
+        <span class="badge" [ngClass]="getEstadoClass(viaje.estado)">
+          {{ getEstadoTexto(viaje.estado) }}
+        </span>
+      </div>
+
+      <p class="viaje-description">{{ viaje.descripcion }}</p>
+
+      <div class="viaje-dates">
+        <span>📅 {{ viaje.fechaInicio | date:'dd/MM/yyyy' }}</span>
+        <span>→</span>
+        <span>{{ viaje.fechaFin | date:'dd/MM/yyyy' }}</span>
+        <span class="dias">({{ calcularDias(viaje.fechaInicio, viaje.fechaFin) }} días)</span>
+      </div>
+
+      <div class="viaje-budget">
+        <div class="budget-item">
+          <span class="label">Presupuesto:</span>
+          <span class="value">${{ viaje.presupuesto | number:'1.2-2' }}</span>
+        </div>
+        <div class="budget-item">
+          <span class="label">Gastado:</span>
+          <span class="value spent">${{ viaje.gastoActual | number:'1.2-2' }}</span>
+        </div>
+      </div>
+
+      <div class="viaje-progress">
+        <div class="progress-bar">
+          <div 
+            class="progress-fill"
+            [style.width.%]="(viaje.gastoActual / viaje.presupuesto) * 100"
+            [class.over-budget]="viaje.gastoActual > viaje.presupuesto"
+          ></div>
+        </div>
+        <span class="progress-text">
+          {{ (viaje.gastoActual / viaje.presupuesto * 100) | number:'1.0-0' }}% usado
+        </span>
+      </div>
+
+      <div class="viaje-actions">
+        <button 
+          class="btn-editar"
+          (click)="editarViaje(viaje.id, $event)"
+        >
+          ✏️ Editar
+        </button>
+        <button 
+          class="btn-eliminar"
+          (click)="confirmarEliminar(viaje, $event)"
+        >
+          🗑️ Eliminar
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de Confirmación de Eliminación -->
+<div class="modal-overlay" *ngIf="showDeleteModal" (click)="cancelarEliminar()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <h3>⚠️ Confirmar Eliminación</h3>
+    <p>¿Estás seguro de que deseas eliminar el viaje a <strong>{{ viajeAEliminar?.destino }}</strong>?</p>
+    <p class="warning">Esta acción no se puede deshacer.</p>
+    <div class="modal-actions">
+      <button class="btn-cancelar" (click)="cancelarEliminar()">Cancelar</button>
+      <button class="btn-confirmar" (click)="eliminarViaje()">Eliminar</button>
+    </div>
+  </div>
+</div>
