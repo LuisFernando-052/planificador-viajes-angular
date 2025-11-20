@@ -5,7 +5,9 @@ import {
   signInWithEmailAndPassword,
   signOut,
   user,
-  User
+  User,
+  GoogleAuthProvider,
+  signInWithPopup
 } from '@angular/fire/auth';
 import { Observable } from 'rxjs';
 import { Router } from '@angular/router';
@@ -52,6 +54,21 @@ export class AuthService {
       return;
     } catch (error) {
       console.error('Error en login:', error);
+      throw error;
+    }
+  }
+
+  // Login con Google
+  async loginWithGoogle(): Promise<void> {
+    try {
+      const provider = new GoogleAuthProvider();
+      provider.setCustomParameters({
+        prompt: 'select_account'
+      });
+      const credential = await signInWithPopup(this.auth, provider);
+      return;
+    } catch (error) {
+      console.error('Error en login con Google:', error);
       throw error;
     }
   }
