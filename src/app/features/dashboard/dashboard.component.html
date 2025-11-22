@@ -97,8 +97,8 @@
         >
           <div class="viaje-header">
             <h3>{{ viaje.destino }}</h3>
-            <span class="badge" [ngClass]="getEstadoClass(viaje.estado)">
-              {{ getEstadoTexto(viaje.estado) }}
+            <<span class="badge" [ngClass]="getEstadoClass(viaje.estado)">
+              {{ viaje.estado | estadoViaje:'completo' }}
             </span>
           </div>
           <p class="viaje-description">{{ viaje.descripcion }}</p>

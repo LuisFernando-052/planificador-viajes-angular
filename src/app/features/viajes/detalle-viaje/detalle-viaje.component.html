@@ -1,1 +1,186 @@
-<p>detalle-viaje works!</p>
+<div class="detalle-container">
+  <!-- Loading -->
+  <div *ngIf="isLoading" class="loading">
+    <p>Cargando detalles del viaje...</p>
+  </div>
+
+  <!-- Contenido -->
+  <div *ngIf="!isLoading && viaje">
+    <!-- Header -->
+    <div class="detalle-header">
+      <div class="header-top">
+        <a routerLink="/viajes" class="btn-back">← Volver a Mis Viajes</a>
+        <div class="header-actions">
+          <button class="btn-editar" (click)="editarViaje()">✏️ Editar</button>
+          <button class="btn-eliminar" (click)="confirmarEliminarViaje()">🗑️ Eliminar</button>
+        </div>
+      </div>
+
+      <div class="header-content">
+        <div class="header-left">
+          <h1>{{ viaje.destino }}</h1>
+          <span class="badge" [ngClass]="getEstadoClass(viaje.estado)">
+            {{ getEstadoTexto(viaje.estado) }}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Información del Viaje -->
+    <div class="info-grid">
+      <div class="info-card">
+        <h3>📅 Fechas</h3>
+        <p class="info-dates">
+          {{ viaje.fechaInicio | date:'dd/MM/yyyy' }} - {{ viaje.fechaFin | date:'dd/MM/yyyy' }}
+        </p>
+        <p class="info-subtitle">{{ calcularDias() }} días de viaje</p>
+      </div>
+
+      <div class="info-card">
+        <h3>💰 Presupuesto</h3>
+        <p class="info-amount">${{ viaje.presupuesto | number:'1.2-2' }}</p>
+        <p class="info-subtitle">Presupuesto total</p>
+      </div>
+
+      <div class="info-card">
+        <h3>💸 Gastado</h3>
+        <p class="info-amount spent">${{ viaje.gastoActual | number:'1.2-2' }}</p>
+        <p class="info-subtitle">
+          {{ (viaje.gastoActual / viaje.presupuesto * 100) | number:'1.0-0' }}% del presupuesto
+        </p>
+      </div>
+
+      <div class="info-card">
+        <h3>💵 Disponible</h3>
+        <p class="info-amount" [class.negative]="viaje.presupuesto - viaje.gastoActual < 0">
+          ${{ viaje.presupuesto - viaje.gastoActual | number:'1.2-2' }}
+        </p>
+        <p class="info-subtitle">Restante</p>
+      </div>
+    </div>
+
+    <!-- Barra de Progreso del Presupuesto -->
+    <div class="budget-progress">
+      <div class="progress-header">
+        <span>Uso del Presupuesto</span>
+        <span>{{ (viaje.gastoActual / viaje.presupuesto * 100) | number:'1.1-1' }}%</span>
+      </div>
+      <div class="progress-bar">
+        <div 
+          class="progress-fill"
+          [style.width.%]="(viaje.gastoActual / viaje.presupuesto) * 100 > 100 ? 100 : (viaje.gastoActual / viaje.presupuesto) * 100"
+          [class.over-budget]="viaje.gastoActual > viaje.presupuesto"
+        ></div>
+      </div>
+    </div>
+
+    <!-- Descripción -->
+    <div class="descripcion-section">
+      <h3>📝 Descripción</h3>
+      <p>{{ viaje.descripcion }}</p>
+    </div>
+
+    <!-- Resumen por Categoría -->
+    <div class="categorias-section" *ngIf="getActividadesPorCategoria().length > 0">
+      <h3>📊 Gastos por Categoría</h3>
+      <div class="categorias-grid">
+        <div class="categoria-card" *ngFor="let cat of getActividadesPorCategoria()">
+          <span class="categoria-icon">{{ getCategoriaIcon(cat.categoria) }}</span>
+          <div class="categoria-info">
+            <p class="categoria-nombre">{{ cat.categoria | titlecase }}</p>
+            <p class="categoria-monto">${{ cat.total | number:'1.2-2' }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Actividades -->
+    <div class="actividades-section">
+      <div class="section-header">
+        <h2>🎯 Actividades ({{ actividades.length }})</h2>
+        <button class="btn-nueva-actividad">➕ Nueva Actividad</button>
+      </div>
+
+      <!-- Lista vacía -->
+      <div *ngIf="actividades.length === 0" class="empty-state">
+        <div class="empty-icon">📋</div>
+        <h3>No hay actividades registradas</h3>
+        <p>Agrega actividades para organizar mejor tu viaje</p>
+        <button class="btn-primary">Agregar Primera Actividad</button>
+      </div>
+
+      <!-- Lista de actividades -->
+      <div class="actividades-list" *ngIf="actividades.length > 0">
+        <div 
+          class="actividad-card" 
+          *ngFor="let actividad of actividades"
+          [class.completada]="actividad.completada"
+        >
+          <div class="actividad-header">
+            <div class="actividad-check">
+              <input 
+                type="checkbox" 
+                [checked]="actividad.completada"
+                (change)="toggleCompletada(actividad)"
+                class="checkbox"
+              >
+              <span class="categoria-icon">{{ getCategoriaIcon(actividad.categoria) }}</span>
+              <div>
+                <h4 [class.tachado]="actividad.completada">{{ actividad.nombre }}</h4>
+                <p class="actividad-categoria">{{ actividad.categoria | titlecase }}</p>
+              </div>
+            </div>
+            <div class="actividad-actions">
+              <span class="actividad-costo">${{ actividad.costo | number:'1.2-2' }}</span>
+              <button class="btn-delete-small" (click)="confirmarEliminarActividad(actividad, $event)">
+                🗑️
+              </button>
+            </div>
+          </div>
+
+          <p class="actividad-descripcion" *ngIf="actividad.descripcion">
+            {{ actividad.descripcion }}
+          </p>
+
+          <div class="actividad-info">
+            <span>📅 {{ actividad.fecha | date:'dd/MM/yyyy' }}</span>
+            <span>🕐 {{ actividad.hora }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Viaje no encontrado -->
+  <div *ngIf="!isLoading && !viaje" class="empty-state">
+    <div class="empty-icon">❌</div>
+    <h3>Viaje no encontrado</h3>
+    <a routerLink="/viajes" class="btn-primary">Volver a Mis Viajes</a>
+  </div>
+</div>
+
+<!-- Modal Eliminar Viaje -->
+<div class="modal-overlay" *ngIf="showDeleteViajeModal" (click)="cancelarEliminarViaje()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <h3>⚠️ Confirmar Eliminación</h3>
+    <p>¿Estás seguro de que deseas eliminar este viaje?</p>
+    <p class="warning">Se eliminarán también todas las actividades asociadas. Esta acción no se puede deshacer.</p>
+    <div class="modal-actions">
+      <button class="btn-cancelar" (click)="cancelarEliminarViaje()">Cancelar</button>
+      <button class="btn-confirmar" (click)="eliminarViaje()">Eliminar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Eliminar Actividad -->
+<div class="modal-overlay" *ngIf="showDeleteActividadModal" (click)="cancelarEliminarActividad()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <h3>⚠️ Confirmar Eliminación</h3>
+    <p>¿Estás seguro de que deseas eliminar la actividad <strong>{{ actividadAEliminar?.nombre }}</strong>?</p>
+    <p class="warning">Esta acción no se puede deshacer.</p>
+    <div class="modal-actions">
+      <button class="btn-cancelar" (click)="cancelarEliminarActividad()">Cancelar</button>
+      <button class="btn-confirmar" (click)="eliminarActividad()">Eliminar</button>
+    </div>
+  </div>
+</div>

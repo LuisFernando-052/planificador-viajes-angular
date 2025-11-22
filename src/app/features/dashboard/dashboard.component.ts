@@ -4,6 +4,7 @@ import { Router, RouterLink } from '@angular/router';
 import { ViajesService } from '../../core/services/viajes.service';
 import { AuthService } from '../../core/services/auth.service';
 import { Viaje } from '../../core/models/viaje.model';
+import { EstadoViajePipe } from '../../shared/pipes/estado-viaje.pipe';
 
 interface Estadisticas {
   totalViajes: number;
@@ -18,7 +19,7 @@ interface Estadisticas {
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, EstadoViajePipe],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css'
 })

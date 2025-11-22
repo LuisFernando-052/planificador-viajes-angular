@@ -34,20 +34,35 @@ export class ListaViajesComponent implements OnInit {
   }
 
   cargarViajes() {
+    console.log('🔍 Cargando viajes...');
+    console.log('👤 Usuario actual:', this.viajesService['authService'].getCurrentUser());
+    console.log('👤 UID del usuario:', this.viajesService['authService'].getCurrentUser()?.uid);
+    console.log('👤 Email del usuario:', this.viajesService['authService'].getCurrentUser()?.email);
+    
     this.viajesService.getViajesByUser().subscribe({
       next: (viajes) => {
+        console.log('✅ Viajes recibidos de Firestore:', viajes);
+        console.log('📊 Cantidad de viajes:', viajes.length);
+        
+        if (viajes.length > 0) {
+          console.log('📋 Primer viaje (ejemplo):', viajes[0]);
+        }
+        
         this.viajes = viajes;
         this.aplicarFiltros();
         this.isLoading = false;
       },
       error: (error) => {
-        console.error('Error al cargar viajes:', error);
+        console.error('❌ Error al cargar viajes:', error);
+        console.error('❌ Código del error:', error.code);
+        console.error('❌ Mensaje del error:', error.message);
         this.isLoading = false;
       }
     });
   }
 
   aplicarFiltros() {
+    console.log('🔎 Aplicando filtros...');
     let resultado = [...this.viajes];
 
     // Filtrar por búsqueda (destino o descripción)
@@ -86,6 +101,7 @@ export class ListaViajesComponent implements OnInit {
         break;
     }
 
+    console.log('✅ Viajes después de filtros:', resultado.length);
     this.viajesFiltrados = resultado;
   }
 
@@ -129,12 +145,14 @@ export class ListaViajesComponent implements OnInit {
     if (!this.viajeAEliminar?.id) return;
 
     try {
+      console.log('🗑️ Eliminando viaje:', this.viajeAEliminar.id);
       await this.viajesService.deleteViaje(this.viajeAEliminar.id);
+      console.log('✅ Viaje eliminado correctamente');
       this.showDeleteModal = false;
       this.viajeAEliminar = null;
       // Los datos se actualizarán automáticamente por el Observable
     } catch (error) {
-      console.error('Error al eliminar viaje:', error);
+      console.error('❌ Error al eliminar viaje:', error);
       alert('Error al eliminar el viaje');
     }
   }
