@@ -295,6 +295,7 @@
 }
 
 .btn-nueva-actividad {
+  display: inline-block;
   padding: 10px 20px;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
@@ -303,6 +304,7 @@
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s;
+  text-decoration: none;
 }
 
 .btn-nueva-actividad:hover {

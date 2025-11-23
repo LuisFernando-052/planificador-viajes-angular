@@ -33,30 +33,58 @@ export class DetalleViajeComponent implements OnInit {
   actividadAEliminar: Actividad | null = null;
 
   ngOnInit() {
+    console.log('🚀 Componente detalle-viaje iniciado');
     this.viajeId = this.route.snapshot.paramMap.get('id');
+    console.log('📍 ViajeId obtenido de la URL:', this.viajeId);
     
     if (this.viajeId) {
       this.cargarDatos();
     } else {
+      console.error('❌ No se encontró ID de viaje en la URL');
       this.router.navigate(['/viajes']);
     }
   }
 
   cargarDatos() {
-    if (!this.viajeId) return;
+    if (!this.viajeId) {
+      console.error('❌ ViajeId es null');
+      return;
+    }
 
-    // Cargar viaje y actividades simultáneamente
-    combineLatest([
-      this.viajesService.getViajeById(this.viajeId),
-      this.actividadesService.getActividadesByViaje(this.viajeId)
-    ]).subscribe({
-      next: ([viaje, actividades]) => {
+    console.log('🔍 Iniciando carga de datos...');
+    console.log('🔍 ViajeId:', this.viajeId);
+    console.log('👤 Usuario actual:', this.viajesService['authService'].getCurrentUser()?.uid);
+
+    // Cargar viaje
+    console.log('📥 Llamando a getViajeById...');
+    this.viajesService.getViajeById(this.viajeId).subscribe({
+      next: (viaje) => {
+        console.log('✅ Viaje recibido:', viaje);
         this.viaje = viaje || null;
-        this.actividades = actividades;
-        this.isLoading = false;
+        
+        // Cargar actividades
+        console.log('📥 Llamando a getActividadesByViaje...');
+        this.actividadesService.getActividadesByViaje(this.viajeId!).subscribe({
+          next: (actividades) => {
+            console.log('✅ Actividades recibidas:', actividades);
+            this.actividades = actividades;
+            this.isLoading = false;
+            console.log('✅ Carga completa. isLoading:', this.isLoading);
+          },
+          error: (error) => {
+            console.error('❌ Error al cargar actividades:', error);
+            console.error('❌ Código:', error.code);
+            console.error('❌ Mensaje:', error.message);
+            this.actividades = [];
+            this.isLoading = false;
+          }
+        });
       },
       error: (error) => {
-        console.error('Error al cargar datos:', error);
+        console.error('❌ Error al cargar viaje:', error);
+        console.error('❌ Código:', error.code);
+        console.error('❌ Mensaje:', error.message);
+        this.viaje = null;
         this.isLoading = false;
       }
     });

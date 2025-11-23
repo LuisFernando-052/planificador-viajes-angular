@@ -47,6 +47,20 @@ export const routes: Routes = [
       }
     ]
   },
+  {
+    path: 'actividades',
+    canActivate: [authGuard],
+    children: [
+      {
+        path: 'nueva',
+        loadComponent: () => import('./features/actividades/form-actividad/form-actividad.component').then(m => m.FormActividadComponent)
+      },
+      {
+        path: 'editar/:id',
+        loadComponent: () => import('./features/actividades/form-actividad/form-actividad.component').then(m => m.FormActividadComponent)
+      }
+    ]
+  },
   
   // Página 404 - Ruta no encontrada
   {

@@ -1,1 +1,145 @@
-<p>form-actividad works!</p>
+<div class="form-container">
+  <div class="form-card">
+    <div class="form-header">
+      <h2>{{ isEditMode ? 'Editar Actividad' : 'Nueva Actividad' }}</h2>
+      <button class="btn-back" (click)="volver()">← Volver al Viaje</button>
+    </div>
+
+    <form [formGroup]="actividadForm" (ngSubmit)="onSubmit()">
+      
+      <!-- Nombre -->
+      <div class="form-group">
+        <label for="nombre">Nombre de la Actividad *</label>
+        <input 
+          type="text" 
+          id="nombre" 
+          formControlName="nombre"
+          class="form-control"
+          [class.invalid]="nombre?.invalid && nombre?.touched"
+          placeholder="Ej: Visita a la Torre Eiffel"
+        >
+        <div class="error-message" *ngIf="nombre?.invalid && nombre?.touched">
+          <small *ngIf="nombre?.errors?.['required']">El nombre es obligatorio</small>
+          <small *ngIf="nombre?.errors?.['minlength']">Mínimo 3 caracteres</small>
+        </div>
+      </div>
+
+      <!-- Descripción -->
+      <div class="form-group">
+        <label for="descripcion">Descripción *</label>
+        <textarea 
+          id="descripcion" 
+          formControlName="descripcion"
+          class="form-control"
+          [class.invalid]="descripcion?.invalid && descripcion?.touched"
+          placeholder="Describe la actividad..."
+          rows="3"
+        ></textarea>
+        <div class="error-message" *ngIf="descripcion?.invalid && descripcion?.touched">
+          <small *ngIf="descripcion?.errors?.['required']">La descripción es obligatoria</small>
+          <small *ngIf="descripcion?.errors?.['minlength']">Mínimo 5 caracteres</small>
+        </div>
+      </div>
+
+      <!-- Categoría -->
+      <div class="form-group">
+        <label for="categoria">Categoría *</label>
+        <div class="categoria-grid">
+          <label 
+            *ngFor="let cat of categorias" 
+            class="categoria-option"
+            [class.selected]="categoria?.value === cat.value"
+          >
+            <input 
+              type="radio" 
+              [value]="cat.value" 
+              formControlName="categoria"
+              class="radio-input"
+            >
+            <span class="categoria-icon">{{ cat.icon }}</span>
+            <span class="categoria-label">{{ cat.label }}</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Fecha y Hora -->
+      <div class="form-row">
+        <div class="form-group">
+          <label for="fecha">Fecha *</label>
+          <input 
+            type="date" 
+            id="fecha" 
+            formControlName="fecha"
+            class="form-control"
+            [class.invalid]="fecha?.invalid && fecha?.touched"
+          >
+          <div class="error-message" *ngIf="fecha?.invalid && fecha?.touched">
+            <small *ngIf="fecha?.errors?.['required']">La fecha es obligatoria</small>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="hora">Hora *</label>
+          <input 
+            type="time" 
+            id="hora" 
+            formControlName="hora"
+            class="form-control"
+            [class.invalid]="hora?.invalid && hora?.touched"
+          >
+          <div class="error-message" *ngIf="hora?.invalid && hora?.touched">
+            <small *ngIf="hora?.errors?.['required']">La hora es obligatoria</small>
+          </div>
+        </div>
+      </div>
+
+      <!-- Costo -->
+      <div class="form-group">
+        <label for="costo">Costo ($) *</label>
+        <input 
+          type="number" 
+          id="costo" 
+          formControlName="costo"
+          class="form-control"
+          [class.invalid]="costo?.invalid && costo?.touched"
+          placeholder="0.00"
+          min="0"
+          step="0.01"
+        >
+        <div class="error-message" *ngIf="costo?.invalid && costo?.touched">
+          <small *ngIf="costo?.errors?.['required']">El costo es obligatorio</small>
+          <small *ngIf="costo?.errors?.['min']">Debe ser mayor o igual a 0</small>
+        </div>
+      </div>
+
+      <!-- Mensajes -->
+      <div class="alert-error" *ngIf="errorMessage">
+        {{ errorMessage }}
+      </div>
+
+      <div class="alert-success" *ngIf="successMessage">
+        {{ successMessage }}
+      </div>
+
+      <!-- Botones -->
+      <div class="form-actions">
+        <button 
+          type="button" 
+          class="btn-cancel"
+          (click)="volver()"
+          [disabled]="isLoading"
+        >
+          Cancelar
+        </button>
+        <button 
+          type="submit" 
+          class="btn-submit"
+          [disabled]="isLoading || actividadForm.invalid"
+        >
+          <span *ngIf="!isLoading">{{ isEditMode ? 'Actualizar' : 'Crear Actividad' }}</span>
+          <span *ngIf="isLoading">Guardando...</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

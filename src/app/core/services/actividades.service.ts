@@ -30,6 +30,8 @@ export class ActividadesService {
 
   // Obtener todas las actividades de un viaje
   getActividadesByViaje(viajeId: string): Observable<Actividad[]> {
+    console.log('🔍 Obteniendo actividades del viaje:', viajeId);
+    
     const q = query(
       this.actividadesCollection,
       where('viajeId', '==', viajeId),
@@ -37,13 +39,14 @@ export class ActividadesService {
     );
 
     return collectionData(q, { idField: 'id' }).pipe(
-      map((actividades: any[]) =>
-        actividades.map(actividad => ({
+      map((actividades: any[]) => {
+        console.log('✅ Actividades recibidas:', actividades);
+        return actividades.map(actividad => ({
           ...actividad,
           fecha: actividad.fecha?.toDate(),
           createdAt: actividad.createdAt?.toDate()
-        }))
-      )
+        }));
+      })
     ) as Observable<Actividad[]>;
   }
 
@@ -64,8 +67,15 @@ export class ActividadesService {
 
   // Crear una nueva actividad
   async addActividad(actividad: Omit<Actividad, 'id' | 'userId' | 'createdAt'>): Promise<string> {
+    console.log('🎯 Intentando crear actividad:', actividad);
+    
     const userId = this.authService.getCurrentUser()?.uid;
-    if (!userId) throw new Error('Usuario no autenticado');
+    console.log('👤 UserId:', userId);
+    
+    if (!userId) {
+      console.error('❌ Usuario no autenticado');
+      throw new Error('Usuario no autenticado');
+    }
 
     const nuevaActividad = {
       ...actividad,
@@ -75,16 +85,28 @@ export class ActividadesService {
       createdAt: Timestamp.now()
     };
 
-    const docRef = await addDoc(this.actividadesCollection, nuevaActividad);
+    console.log('📦 Actividad a guardar en Firestore:', nuevaActividad);
 
-    // Actualizar el gasto total del viaje
-    await this.actualizarGastoViaje(actividad.viajeId);
+    try {
+      const docRef = await addDoc(this.actividadesCollection, nuevaActividad);
+      console.log('✅ Actividad creada con ID:', docRef.id);
 
-    return docRef.id;
+      // Actualizar el gasto total del viaje
+      console.log('💰 Actualizando gasto del viaje...');
+      await this.actualizarGastoViaje(actividad.viajeId);
+      console.log('✅ Gasto del viaje actualizado');
+
+      return docRef.id;
+    } catch (error) {
+      console.error('❌ Error al crear actividad:', error);
+      throw error;
+    }
   }
 
   // Actualizar una actividad
   async updateActividad(id: string, actividad: Partial<Actividad>): Promise<void> {
+    console.log('📝 Actualizando actividad:', id, actividad);
+    
     const actividadDoc = doc(this.firestore, `actividades/${id}`);
     const updateData: any = { ...actividad };
 
@@ -102,11 +124,14 @@ export class ActividadesService {
 
   // Eliminar una actividad
   async deleteActividad(id: string, viajeId: string): Promise<void> {
+    console.log('🗑️ Eliminando actividad:', id);
+    
     const actividadDoc = doc(this.firestore, `actividades/${id}`);
     await deleteDoc(actividadDoc);
 
     // Recalcular gasto del viaje
     await this.actualizarGastoViaje(viajeId);
+    console.log('✅ Actividad eliminada');
   }
 
   // Marcar actividad como completada
@@ -117,11 +142,18 @@ export class ActividadesService {
 
   // Calcular y actualizar el gasto total del viaje
   private async actualizarGastoViaje(viajeId: string): Promise<void> {
+    console.log('💰 Calculando gasto total del viaje:', viajeId);
+    
     const actividades = await new Promise<Actividad[]>((resolve) => {
-      this.getActividadesByViaje(viajeId).subscribe(acts => resolve(acts));
+      this.getActividadesByViaje(viajeId).subscribe(acts => {
+        console.log('📊 Actividades para calcular gasto:', acts);
+        resolve(acts);
+      });
     });
 
     const gastoTotal = actividades.reduce((total, act) => total + act.costo, 0);
+    console.log('💵 Gasto total calculado:', gastoTotal);
+    
     await this.viajesService.actualizarGastoActual(viajeId, gastoTotal);
   }
 }

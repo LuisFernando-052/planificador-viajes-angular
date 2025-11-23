@@ -95,10 +95,13 @@
     </div>
 
     <!-- Actividades -->
+<!-- Actividades -->
     <div class="actividades-section">
       <div class="section-header">
         <h2>🎯 Actividades ({{ actividades.length }})</h2>
-        <button class="btn-nueva-actividad">➕ Nueva Actividad</button>
+        <a [routerLink]="['/actividades/nueva']" [queryParams]="{viajeId: viajeId}" class="btn-nueva-actividad">
+          ➕ Nueva Actividad
+        </a>
       </div>
 
       <!-- Lista vacía -->
@@ -106,7 +109,9 @@
         <div class="empty-icon">📋</div>
         <h3>No hay actividades registradas</h3>
         <p>Agrega actividades para organizar mejor tu viaje</p>
-        <button class="btn-primary">Agregar Primera Actividad</button>
+        <a [routerLink]="['/actividades/nueva']" [queryParams]="{viajeId: viajeId}" class="btn-primary">
+          Agregar Primera Actividad
+        </a>
       </div>
 
       <!-- Lista de actividades -->
@@ -149,7 +154,6 @@
         </div>
       </div>
     </div>
-  </div>
 
   <!-- Viaje no encontrado -->
   <div *ngIf="!isLoading && !viaje" class="empty-state">
