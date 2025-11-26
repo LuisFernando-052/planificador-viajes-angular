@@ -65,6 +65,6 @@ export const routes: Routes = [
   // Página 404 - Ruta no encontrada
   {
     path: '**',
-    loadComponent: () => import('./features/dashboard/dashboard.component').then(m => m.DashboardComponent)
+    loadComponent: () => import('./features/not-found/not-found.component').then(m => m.NotFoundComponent)
   }
 ];
