@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
+import { ToastService } from '../../../core/services/toast.service';
 
 @Component({
   selector: 'app-login',
@@ -15,6 +16,7 @@ export class LoginComponent {
   private fb = inject(FormBuilder);
   private authService = inject(AuthService);
   private router = inject(Router);
+  private toastService = inject(ToastService);
 
   loginForm: FormGroup;
   errorMessage: string = '';
@@ -45,12 +47,14 @@ export class LoginComponent {
     this.isLoading = true;
     this.errorMessage = '';
 
-    try {
-      const { email, password } = this.loginForm.value;
-      await this.authService.login(email, password);
-      this.router.navigate(['/dashboard']);
-    } catch (error: any) {
-      this.isLoading = false;
+  try {
+  const { email, password } = this.loginForm.value;
+  await this.authService.login(email, password);
+  this.toastService.success('¡Bienvenido de vuelta! 👋');
+  setTimeout(() => {
+    this.router.navigate(['/dashboard']);
+  }, 500);
+} catch (error: any) {
       
       // Manejo de errores de Firebase
       switch (error.code) {
@@ -73,16 +77,19 @@ export class LoginComponent {
   }
 
   // Login con Google
-  async onGoogleLogin() {
-    this.isLoading = true;
-    this.errorMessage = '';
+async onGoogleLogin() {
+  this.isLoading = true;
+  this.errorMessage = '';
 
-    try {
-      await this.authService.loginWithGoogle();
+  try {
+    await this.authService.loginWithGoogle();
+    this.toastService.success('¡Bienvenido! 🎉');
+    setTimeout(() => {
       this.router.navigate(['/dashboard']);
-    } catch (error: any) {
-      this.isLoading = false;
-      this.errorMessage = 'Error al iniciar sesión con Google. Intenta de nuevo.';
-    }
+    }, 500);
+  } catch (error: any) {
+    this.isLoading = false;
+    this.errorMessage = 'Error al iniciar sesión con Google. Intenta de nuevo.';
   }
+}
 }

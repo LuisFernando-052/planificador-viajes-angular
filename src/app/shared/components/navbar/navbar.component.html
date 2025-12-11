@@ -1,19 +1,45 @@
-<nav class="navbar">
-  <div class="nav-container">
-    <a routerLink="/" class="nav-brand">✈️ Planificador de Viajes</a>
+<nav id="mainNavbar" class="navbar-neu">
+  <div class="nav-container-neu">
+    <a routerLink="/" class="nav-brand-neu">
+      <div class="brand-icon-neu">✈️</div>
+      <span class="brand-text-neu">Planificador de Viajes</span>
+    </a>
     
-    <ul class="nav-menu" *ngIf="authService.currentUserSig() as user">
-      <li><a routerLink="/dashboard" routerLinkActive="active">Dashboard</a></li>
-      <li><a routerLink="/viajes" routerLinkActive="active">Mis Viajes</a></li>
-      <li class="user-info">
-        <span>{{ user.email }}</span>
-        <button (click)="onLogout()" class="btn-logout">Salir</button>
+    <ul class="nav-menu-neu" *ngIf="authService.currentUserSig() as user">
+      <li>
+        <a routerLink="/dashboard" routerLinkActive="active" class="nav-button-neu">
+          <span class="button-icon">📊</span>
+          <span class="button-text">Dashboard</span>
+        </a>
+      </li>
+      <li>
+        <a routerLink="/viajes" routerLinkActive="active" [routerLinkActiveOptions]="{exact: false}" class="nav-button-neu">
+          <span class="button-icon">🧳</span>
+          <span class="button-text">Mis Viajes</span>
+        </a>
+      </li>
+      
+      <li class="user-section-neu">
+        <div class="user-card-neu">
+          <div class="user-avatar-neu">
+            {{ (user.email || 'U').charAt(0).toUpperCase() }}
+          </div>
+          <span class="user-email-neu">{{ user.email }}</span>
+        </div>
+        <button (click)="onLogout()" class="btn-logout-neu">
+          <span class="logout-icon">🚪</span>
+          <span>Cerrar Sesión</span>
+        </button>
       </li>
     </ul>
 
-    <ul class="nav-menu" *ngIf="!authService.currentUserSig()">
-      <li><a routerLink="/login" routerLinkActive="active">Iniciar Sesión</a></li>
-      <li><a routerLink="/register" routerLinkActive="active">Registrarse</a></li>
+    <ul class="nav-menu-neu" *ngIf="!authService.currentUserSig()">
+      <li>
+        <a routerLink="/login" routerLinkActive="active" class="nav-button-neu">Iniciar Sesión</a>
+      </li>
+      <li>
+        <a routerLink="/register" routerLinkActive="active" class="nav-button-neu">Registrarse</a>
+      </li>
     </ul>
   </div>
 </nav>

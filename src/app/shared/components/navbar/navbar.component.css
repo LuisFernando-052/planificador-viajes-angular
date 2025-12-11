@@ -1,70 +1,212 @@
-.navbar {
-  background-color: #2c3e50;
-  padding: 1rem 0;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+/* === NAVBAR === */
+.navbar-neu {
+  background: var(--neu-bg);
+  padding: 20px 0;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  border-bottom: 1px solid rgba(163, 177, 198, 0.2);
+  transition: transform 0.3s ease-in-out;
 }
 
-.nav-container {
-  max-width: 1200px;
+.navbar-neu.hide {
+  transform: translateY(-100%);
+}
+
+/* === CONTENEDOR PRINCIPAL === */
+.nav-container-neu {
+  max-width: 1400px;
   margin: 0 auto;
-  padding: 0 20px;
+  padding: 0 30px;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
+  gap: 20px;
 }
 
-.nav-brand {
-  color: white;
-  font-size: 1.5rem;
-  font-weight: bold;
+/* === ELEMENTOS COMUNES === */
+.nav-button-neu,
+.btn-logout-neu,
+.user-card-neu {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--neu-bg);
+  border-radius: 12px;
+  box-shadow: var(--neu-shadow-sm);
+  transition: var(--transition);
+}
+
+.nav-button-neu:hover,
+.btn-logout-neu:hover {
+  box-shadow: var(--neu-shadow-inset);
+  transform: scale(0.98);
+}
+
+/* === BRAND === */
+.nav-brand-neu {
   text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transition: var(--transition);
 }
 
-.nav-menu {
+.brand-icon-neu {
+  width: 50px;
+  height: 50px;
+  background: var(--neu-bg);
+  border-radius: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  box-shadow: var(--neu-shadow-sm);
+  transition: var(--transition);
+}
+
+.nav-brand-neu:hover .brand-icon-neu {
+  box-shadow: var(--neu-shadow-inset);
+  transform: scale(0.98);
+}
+
+.brand-text-neu {
+  font-size: 20px;
+  font-weight: 700;
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* === MENÚ === */
+.nav-menu-neu {
   display: flex;
   list-style: none;
-  gap: 2rem;
+  gap: 15px;
   margin: 0;
   padding: 0;
   align-items: center;
+  flex-wrap: wrap;
 }
 
-.nav-menu a {
-  color: white;
+/* === BOTONES DE MENÚ === */
+.nav-button-neu {
+  padding: 12px 24px;
   text-decoration: none;
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
-  transition: background-color 0.3s;
-}
-
-.nav-menu a:hover {
-  background-color: rgba(255,255,255,0.1);
-}
-
-.nav-menu a.active {
-  background-color: #3498db;
-}
-
-.user-info {
-  display: flex;
-  gap: 1rem;
-  align-items: center;
-}
-
-.user-info span {
-  color: white;
-}
-
-.btn-logout {
-  background-color: #e74c3c;
-  color: white;
-  border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
+  color: var(--color-text-dark);
+  font-weight: 600;
+  font-size: 15px;
   cursor: pointer;
-  transition: background-color 0.3s;
+  border: none;
 }
 
-.btn-logout:hover {
-  background-color: #c0392b;
+.nav-button-neu .button-icon {
+  font-size: 18px;
+}
+
+.nav-button-neu.active {
+  box-shadow: var(--neu-shadow-inset);
+  background: linear-gradient(145deg, #c9d4e3, #dbe3f0);
+  color: var(--color-primary);
+  font-weight: 700;
+}
+
+/* === USUARIO === */
+.user-section-neu {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.user-card-neu {
+  padding: 8px 16px;
+  border-radius: 50px;
+}
+
+.user-avatar-neu {
+  width: 45px;
+  height: 45px;
+  background: var(--gradient-warm);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-weight: 700;
+  font-size: 18px;
+  box-shadow: 4px 4px 8px rgba(255, 107, 53, 0.3), 
+              -2px -2px 6px rgba(255, 255, 255, 0.8);
+}
+
+.user-email-neu {
+  color: var(--color-text-dark);
+  font-weight: 600;
+  font-size: 14px;
+  max-width: 150px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* === LOGOUT === */
+.btn-logout-neu {
+  padding: 12px 20px;
+  border: none;
+  color: var(--color-danger);
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.btn-logout-neu .logout-icon {
+  font-size: 16px;
+}
+
+.btn-logout-neu:hover {
+  background: linear-gradient(145deg, #ffd1d1, #ffe0e0);
+}
+
+/* === RESPONSIVE === */
+@media (max-width: 968px) {
+  .nav-container-neu {
+    flex-direction: column;
+    padding: 15px 20px;
+  }
+
+  .nav-menu-neu {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .user-section-neu {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .user-card-neu,
+  .btn-logout-neu {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .user-email-neu {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 600px) {
+  .button-text {
+    display: none;
+  }
+
+  .nav-button-neu {
+    padding: 12px;
+    justify-content: center;
+  }
+
+  .button-icon {
+    font-size: 20px;
+  }
 }

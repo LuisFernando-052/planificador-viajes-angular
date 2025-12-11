@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { ViajesService } from '../../../core/services/viajes.service';
 import { Viaje } from '../../../core/models/viaje.model';
+import { ToastService } from '../../../core/services/toast.service';
 
 @Component({
   selector: 'app-form-viaje',
@@ -17,6 +18,7 @@ export class FormViajeComponent implements OnInit {
   private viajesService = inject(ViajesService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
+  private toastService = inject(ToastService);
 
   viajeForm: FormGroup;
   isEditMode: boolean = false;
@@ -103,40 +105,41 @@ export class FormViajeComponent implements OnInit {
   get estado() { return this.viajeForm.get('estado'); }
   get imagenUrl() { return this.viajeForm.get('imagenUrl'); }
 
-  async onSubmit() {
-    if (this.viajeForm.invalid) {
-      this.viajeForm.markAllAsTouched();
-      return;
-    }
-
-    this.isLoading = true;
-    this.errorMessage = '';
-    this.successMessage = '';
-
-    try {
-      const formData = this.viajeForm.value;
-
-      if (this.isEditMode && this.viajeId) {
-        // Actualizar viaje existente
-        await this.viajesService.updateViaje(this.viajeId, formData);
-        this.successMessage = '¡Viaje actualizado exitosamente!';
-      } else {
-        // Crear nuevo viaje
-        await this.viajesService.addViaje(formData);
-        this.successMessage = '¡Viaje creado exitosamente!';
-      }
-
-      // Redirigir después de 1.5 segundos
-      setTimeout(() => {
-        this.router.navigate(['/viajes']);
-      }, 1500);
-
-    } catch (error: any) {
-      this.isLoading = false;
-      this.errorMessage = 'Error al guardar el viaje. Intenta de nuevo.';
-      console.error('Error:', error);
-    }
+async onSubmit() {
+  if (this.viajeForm.invalid) {
+    this.viajeForm.markAllAsTouched();
+    this.toastService.warning('Por favor completa todos los campos correctamente');
+    return;
   }
+
+  this.isLoading = true;
+  this.errorMessage = '';
+  this.successMessage = '';
+
+  try {
+    const formData = this.viajeForm.value;
+
+    if (this.isEditMode && this.viajeId) {
+      // Actualizar viaje existente
+      await this.viajesService.updateViaje(this.viajeId, formData);
+      this.toastService.success('¡Viaje actualizado exitosamente! 🎉');
+    } else {
+      // Crear nuevo viaje
+      await this.viajesService.addViaje(formData);
+      this.toastService.success('¡Viaje creado exitosamente! ✈️');
+    }
+
+    // Redirigir después de 800ms
+    setTimeout(() => {
+      this.router.navigate(['/viajes']);
+    }, 800);
+
+  } catch (error: any) {
+    this.isLoading = false;
+    this.toastService.error('Error al guardar el viaje. Intenta de nuevo.');
+    console.error('Error:', error);
+  }
+}
 
   calcularDias(): number {
     const inicio = this.fechaInicio?.value;

@@ -5,6 +5,7 @@ import { ViajesService } from '../../core/services/viajes.service';
 import { AuthService } from '../../core/services/auth.service';
 import { Viaje } from '../../core/models/viaje.model';
 import { EstadoViajePipe } from '../../shared/pipes/estado-viaje.pipe';
+import { FechaLegiblePipe } from '../../shared/pipes/fecha-legible.pipe';
 
 interface Estadisticas {
   totalViajes: number;
@@ -19,7 +20,7 @@ interface Estadisticas {
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterLink, EstadoViajePipe],
+  imports: [CommonModule, RouterLink, EstadoViajePipe, FechaLegiblePipe],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css'
 })
@@ -41,6 +42,7 @@ export class DashboardComponent implements OnInit {
   };
   isLoading: boolean = true;
   userEmail: string = '';
+  proximoViaje: Viaje | null = null;
 
   ngOnInit() {
     this.userEmail = this.authService.getCurrentUser()?.email || '';
@@ -78,13 +80,18 @@ export class DashboardComponent implements OnInit {
   }
 
   obtenerProximosViajes() {
-    const hoy = new Date();
-    this.proximosViajes = this.viajes
-      .filter(v => v.estado !== 'completado' && v.estado !== 'cancelado')
-      .filter(v => new Date(v.fechaInicio) >= hoy)
-      .sort((a, b) => new Date(a.fechaInicio).getTime() - new Date(b.fechaInicio).getTime())
-      .slice(0, 3);
-  }
+  const hoy = new Date();
+  const viajesFuturos = this.viajes
+    .filter(v => v.estado !== 'completado' && v.estado !== 'cancelado')
+    .filter(v => new Date(v.fechaInicio) >= hoy)
+    .sort((a, b) => new Date(a.fechaInicio).getTime() - new Date(b.fechaInicio).getTime());
+  
+  // Obtener el próximo viaje (el más cercano)
+  this.proximoViaje = viajesFuturos.length > 0 ? viajesFuturos[0] : null;
+  
+  // Obtener los próximos 3 viajes
+  this.proximosViajes = viajesFuturos.slice(0, 3);
+}
 
   verDetalleViaje(id: string | undefined) {
     if (id) {
@@ -111,4 +118,10 @@ export class DashboardComponent implements OnInit {
     };
     return textos[estado] || estado;
   }
+  calcularDias(viaje: Viaje): number {
+  const inicio = new Date(viaje.fechaInicio);
+  const fin = new Date(viaje.fechaFin);
+  const diferencia = fin.getTime() - inicio.getTime();
+  return Math.ceil(diferencia / (1000 * 60 * 60 * 24));
+}
 }

@@ -47,6 +47,56 @@
       </div>
     </div>
 
+    <!-- Próximo Viaje Destacado -->
+    <div class="featured-trip" *ngIf="proximoViaje">
+      <div class="featured-header">
+        <h2>🎯 Tu Próximo Viaje</h2>
+        <a [routerLink]="['/viajes', proximoViaje.id]" class="btn-ver-mas">Ver detalles →</a>
+      </div>
+      <div class="featured-content">
+        <div class="featured-info">
+          <h3>{{ proximoViaje.destino }}</h3>
+          <p class="featured-description">{{ proximoViaje.descripcion }}</p>
+          <div class="featured-dates">
+            <div class="date-item">
+              <span class="date-label">Fecha de inicio</span>
+              <span class="date-value">{{ proximoViaje.fechaInicio | fechaLegible:'largo' }}</span>
+            </div>
+            <div class="date-separator">→</div>
+            <div class="date-item">
+              <span class="date-label">Fecha de fin</span>
+              <span class="date-value">{{ proximoViaje.fechaFin | fechaLegible:'largo' }}</span>
+            </div>
+          </div>
+          <div class="featured-stats">
+            <div class="stat-box">
+              <span class="stat-icon">💰</span>
+              <div>
+                <p class="stat-label">Presupuesto</p>
+                <p class="stat-value">${{ proximoViaje.presupuesto | number:'1.0-0' }}</p>
+              </div>
+            </div>
+            <div class="stat-box">
+              <span class="stat-icon">📅</span>
+              <div>
+                <p class="stat-label">Duración</p>
+                <p class="stat-value">{{ calcularDias(proximoViaje) }} días</p>
+              </div>
+            </div>
+            <div class="stat-box">
+              <span class="stat-icon">{{ proximoViaje.estado | estadoViaje:'emoji' }}</span>
+              <div>
+                <p class="stat-label">Estado</p>
+                <p class="stat-value">{{ proximoViaje.estado | estadoViaje:'texto' }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Presupuesto vs Gastos -->
+
     <!-- Presupuesto vs Gastos -->
     <div class="budget-section">
       <h2>Presupuesto y Gastos</h2>

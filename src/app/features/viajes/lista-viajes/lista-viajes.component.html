@@ -1,4 +1,5 @@
 <div class="lista-container">
+  <app-breadcrumbs></app-breadcrumbs>
   <div class="lista-header">
     <h1>Mis Viajes</h1>
     <a routerLink="/viajes/nuevo" class="btn-nuevo">➕ Nuevo Viaje</a>
@@ -53,9 +54,8 @@
   </div>
 
   <!-- Loading -->
-  <div *ngIf="isLoading" class="loading">
-    <p>Cargando viajes...</p>
-  </div>
+<!-- Loading con Skeleton -->
+  <app-skeleton-loader *ngIf="isLoading" type="card" [count]="3"></app-skeleton-loader>
 
   <!-- Lista Vacía -->
   <div *ngIf="!isLoading && viajesFiltrados.length === 0 && searchTerm === '' && filtroEstado === 'todos'" class="empty-state">
@@ -79,59 +79,69 @@
       *ngFor="let viaje of viajesFiltrados"
       (click)="verDetalle(viaje.id)"
     >
-      <div class="viaje-header">
-        <h3>{{ viaje.destino }}</h3>
-        <span class="badge" [ngClass]="getEstadoClass(viaje.estado)">
+      <!-- Imagen del viaje -->
+      <div class="viaje-image" [style.background-image]="'url(' + getViajeImage(viaje) + ')'">
+        <span class="badge badge-floating" [ngClass]="getEstadoClass(viaje.estado)">
           {{ getEstadoTexto(viaje.estado) }}
         </span>
       </div>
 
-      <p class="viaje-description">{{ viaje.descripcion }}</p>
-
-      <div class="viaje-dates">
-        <span>📅 {{ viaje.fechaInicio | date:'dd/MM/yyyy' }}</span>
-        <span>→</span>
-        <span>{{ viaje.fechaFin | date:'dd/MM/yyyy' }}</span>
-        <span class="dias">({{ calcularDias(viaje.fechaInicio, viaje.fechaFin) }} días)</span>
-      </div>
-
-      <div class="viaje-budget">
-        <div class="budget-item">
-          <span class="label">Presupuesto:</span>
-          <span class="value">${{ viaje.presupuesto | number:'1.2-2' }}</span>
+      <div class="viaje-content">
+        <div class="viaje-header">
+          <h3>{{ viaje.destino }}</h3>
+          <div class="viaje-stats">
+            <span class="stat-item" title="Número de días">
+              📅 {{ calcularDias(viaje.fechaInicio, viaje.fechaFin) }}d
+            </span>
+          </div>
         </div>
-        <div class="budget-item">
-          <span class="label">Gastado:</span>
-          <span class="value spent">${{ viaje.gastoActual | number:'1.2-2' }}</span>
-        </div>
-      </div>
 
-      <div class="viaje-progress">
-        <div class="progress-bar">
-          <div 
-            class="progress-fill"
-            [style.width.%]="(viaje.gastoActual / viaje.presupuesto) * 100"
-            [class.over-budget]="viaje.gastoActual > viaje.presupuesto"
-          ></div>
-        </div>
-        <span class="progress-text">
-          {{ (viaje.gastoActual / viaje.presupuesto * 100) | number:'1.0-0' }}% usado
-        </span>
-      </div>
+        <p class="viaje-description">{{ viaje.descripcion }}</p>
 
-      <div class="viaje-actions">
-        <button 
-          class="btn-editar"
-          (click)="editarViaje(viaje.id, $event)"
-        >
-          ✏️ Editar
-        </button>
-        <button 
-          class="btn-eliminar"
-          (click)="confirmarEliminar(viaje, $event)"
-        >
-          🗑️ Eliminar
-        </button>
+        <div class="viaje-dates">
+          <span>📍 {{ viaje.fechaInicio | date:'dd/MM/yyyy' }}</span>
+          <span>→</span>
+          <span>{{ viaje.fechaFin | date:'dd/MM/yyyy' }}</span>
+        </div>
+
+        <div class="viaje-budget">
+          <div class="budget-item">
+            <span class="label">Presupuesto:</span>
+            <span class="value">${{ viaje.presupuesto | number:'1.0-0' }}</span>
+          </div>
+          <div class="budget-item">
+            <span class="label">Gastado:</span>
+            <span class="value spent">${{ viaje.gastoActual | number:'1.0-0' }}</span>
+          </div>
+        </div>
+
+        <div class="viaje-progress">
+          <div class="progress-bar">
+            <div 
+              class="progress-fill"
+              [style.width.%]="(viaje.gastoActual / viaje.presupuesto) * 100"
+              [class.over-budget]="viaje.gastoActual > viaje.presupuesto"
+            ></div>
+          </div>
+          <span class="progress-text">
+            {{ (viaje.gastoActual / viaje.presupuesto * 100) | number:'1.0-0' }}% usado
+          </span>
+        </div>
+
+        <div class="viaje-actions">
+          <button 
+            class="btn-editar"
+            (click)="editarViaje(viaje.id, $event)"
+          >
+            ✏️ Editar
+          </button>
+          <button 
+            class="btn-eliminar"
+            (click)="confirmarEliminar(viaje, $event)"
+          >
+            🗑️ Eliminar
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -149,3 +159,8 @@
     </div>
   </div>
 </div>
+
+<!-- Botón Flotante -->
+<a routerLink="/viajes/nuevo" class="fab">
+  <span class="fab-icon">+</span>
+</a>

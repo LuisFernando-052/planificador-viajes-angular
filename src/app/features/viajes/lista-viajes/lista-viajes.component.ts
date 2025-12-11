@@ -2,19 +2,23 @@ import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { BreadcrumbsComponent } from '../../../shared/components/breadcrumbs/breadcrumbs.component';
 import { ViajesService } from '../../../core/services/viajes.service';
 import { Viaje } from '../../../core/models/viaje.model';
+import { SkeletonLoaderComponent } from '../../../shared/components/skeleton-loader/skeleton-loader.component';
+import { ImageHelperService } from '../../../core/services/image-helper.service';
 
 @Component({
   selector: 'app-lista-viajes',
   standalone: true,
-  imports: [CommonModule, RouterLink, FormsModule],
+  imports: [CommonModule, RouterLink, FormsModule, BreadcrumbsComponent, SkeletonLoaderComponent],
   templateUrl: './lista-viajes.component.html',
   styleUrl: './lista-viajes.component.css'
 })
 export class ListaViajesComponent implements OnInit {
   private viajesService = inject(ViajesService);
   private router = inject(Router);
+  private imageHelper = inject(ImageHelperService);
 
   viajes: Viaje[] = [];
   viajesFiltrados: Viaje[] = [];
@@ -182,5 +186,9 @@ export class ListaViajesComponent implements OnInit {
     const fin = new Date(fechaFin);
     const diferencia = fin.getTime() - inicio.getTime();
     return Math.ceil(diferencia / (1000 * 60 * 60 * 24));
+  }
+
+  getViajeImage(viaje: Viaje): string {
+    return this.imageHelper.getImageForDestination(viaje.destino, viaje.imagenUrl);
   }
 }

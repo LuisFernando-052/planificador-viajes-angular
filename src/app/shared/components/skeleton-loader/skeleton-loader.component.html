@@ -1,0 +1,31 @@
+<!-- Skeleton para tarjetas de viajes -->
+<div *ngIf="type === 'card'" class="skeleton-grid">
+  <div *ngFor="let item of items" class="skeleton-card">
+    <div class="skeleton-image"></div>
+    <div class="skeleton-content">
+      <div class="skeleton-title"></div>
+      <div class="skeleton-text"></div>
+      <div class="skeleton-text short"></div>
+      <div class="skeleton-footer">
+        <div class="skeleton-button"></div>
+        <div class="skeleton-button"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Skeleton para listas -->
+<div *ngIf="type === 'list'" class="skeleton-list">
+  <div *ngFor="let item of items" class="skeleton-list-item">
+    <div class="skeleton-circle"></div>
+    <div class="skeleton-list-content">
+      <div class="skeleton-text"></div>
+      <div class="skeleton-text short"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Skeleton para texto -->
+<div *ngIf="type === 'text'" class="skeleton-text-container">
+  <div *ngFor="let item of items" class="skeleton-text"></div>
+</div>
